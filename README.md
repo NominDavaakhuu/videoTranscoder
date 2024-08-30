@@ -10,7 +10,7 @@ The Video Transcoding App allows users to upload, manage, and transcode videos f
 - **Video Upload and Management**: Users can upload videos in various formats and manage their uploads.
 - **Video Transcoding**: Convert videos from formats like AVI, MKV, FLV, etc., to MP4 format and vice versa.
 - **Real-Time Progress Indication**: Video transcoding progress is displayed in real-time using WebSocket.
-- **REST API**: Comprehensive REST API for managing user sessions, video uploads, transcoding, and downloads.
+- **REST API**: Comprehensive REST API for managing user sessions, video uploads, transcoding, and downloads & deletions.
 - **SQLite Database**: Used to store user information, video metadata, and manage video ownership.
 
 ## Prerequisites
@@ -45,31 +45,31 @@ The app will start on http://localhost:3000.
 Build the Docker Image
 docker build -t video-transcoding-app .
 Run the Docker Container
-docker run -dp 3000:3000 video-transcoding-app
+docker run -dp 8080:3000 video-transcoding-app
 ### 6. Deploy to AWS EC2
 Create an EC2 instance.
 Install Docker and Docker Compose on the instance.
 Push the Docker image to AWS ECR.
 Pull the Docker image on EC2 and run it.
-### 7. REST API Endpoints
-#### Authentication
+## REST API Endpoints
+### Authentication
 POST /auth/login - User login with username and password. Returns a JWT token.
-#### Video Management
+### Video Management
 GET /files - Get a list of uploaded videos.
 POST /files/upload - Upload a new video file.
 DELETE /files/:id - Delete an uploaded video by ID.
 GET /files/download/:id - Download a video file by ID.
-#### Video Transcoding
+### Video Transcoding
 POST /videos/transcode/:videoId - Transcode a video by ID.
 GET /videos/progress/:videoId - Get transcoding progress for a video by ID.
-#### Usage
+### Usage
 Login: Use the login form to authenticate. Enter the username and password (hardcoded for simplicity).
 Upload Video: After logging in, upload videos using the upload form. Supported formats are AVI, MKV, FLV, etc.
 Transcode Video: Choose a video from the list and click "Transcode" to convert it to the desired format.
 Monitor Progress: Watch the progress of the transcoding in real-time via a progress bar.
 Download/Manage Videos: Download the transcoded videos or manage them (e.g., delete if no longer needed).
 
-Database Initialization and Connection
+## Database Initialization and Connection
 
 The database is initialized and connected using the utils/db.js file. When the app starts, it checks for the existence of the required tables and creates them if they do not exist.
 File Structure
@@ -97,7 +97,7 @@ video-transcoding-app/
 │   └── thumbnails/             # Thumbnails generated for videos
 └── uploads/                    # Directory for uploaded videos
 
-Live Progress Indication
+## Live Progress Indication
 The app uses WebSockets to provide real-time progress updates to users while their videos are being transcoded. This allows users to monitor the progress and manage their time accordingly.
 
 Additional Features

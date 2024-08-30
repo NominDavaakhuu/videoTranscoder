@@ -1,0 +1,53 @@
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Dependency directories
+jspm_packages/
+bower_components/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+
+# Coverage directories
+coverage/
+
+# Temporary files
+tmp/
+temp/
+*.swp
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Docker-specific files
+docker-compose.override.yml
+
+# Video uploads and generated files
+uploads/
+public/thumbnails/
+
+# SQLite database files
+*.sqlite
+*.sqlite3
