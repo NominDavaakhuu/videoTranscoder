@@ -28,6 +28,8 @@ cd video-transcoding-app
 
 ### 2. Install Dependencies
 npm install
+npm i ffmpeg
+npm i jsonwebtoken
 
 ### 3. Set Up Environment Variables
 
@@ -49,18 +51,18 @@ Create an EC2 instance.
 Install Docker and Docker Compose on the instance.
 Push the Docker image to AWS ECR.
 Pull the Docker image on EC2 and run it.
-REST API Endpoints
-Authentication
+### 7. REST API Endpoints
+#### Authentication
 POST /auth/login - User login with username and password. Returns a JWT token.
-Video Management
+#### Video Management
 GET /files - Get a list of uploaded videos.
 POST /files/upload - Upload a new video file.
 DELETE /files/:id - Delete an uploaded video by ID.
 GET /files/download/:id - Download a video file by ID.
-Video Transcoding
+#### Video Transcoding
 POST /videos/transcode/:videoId - Transcode a video by ID.
 GET /videos/progress/:videoId - Get transcoding progress for a video by ID.
-Usage
+#### Usage
 Login: Use the login form to authenticate. Enter the username and password (hardcoded for simplicity).
 Upload Video: After logging in, upload videos using the upload form. Supported formats are AVI, MKV, FLV, etc.
 Transcode Video: Choose a video from the list and click "Transcode" to convert it to the desired format.
