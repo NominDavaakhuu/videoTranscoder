@@ -8,7 +8,7 @@ The Video Transcoding App allows users to upload, manage, and transcode videos f
 
 - **User Authentication**: Simple login system with JWT-based authentication.
 - **Video Upload and Management**: Users can upload videos in various formats and manage their uploads.
-- **Video Transcoding**: Convert videos from formats like AVI, MKV, FLV, etc., to MP4 format and vice versa.
+- **Video Transcoding**: Convert videos from formats like AVI, MKV, FLV, etc., to MP4 format.
 - **Real-Time Progress Indication**: Video transcoding progress is displayed in real-time using WebSocket.
 - **REST API**: Comprehensive REST API for managing user sessions, video uploads, transcoding, and downloads & deletions.
 - **SQLite Database**: Used to store user information, video metadata, and manage video ownership.

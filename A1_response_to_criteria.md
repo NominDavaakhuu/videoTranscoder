@@ -77,7 +77,7 @@ Core criteria
 ### Two kinds of data
 
 #### First kind
-
+!Manage video ownership
 - **One line description:** user information (like username) and video file details (such as file names and associated users). It is used to manage user authentication, authorization, and to keep track of uploaded video files in the app.
 - **Type:** Structured data is stored in a SQLite3 database. For example, there is a videos table to store details about video files uploaded by users. The sqlite_sequence table helps manage auto-incremented fields in the database.
 - **Video timestamp:** 03:15
