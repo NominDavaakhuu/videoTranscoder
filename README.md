@@ -2,7 +2,11 @@
 
 ## Overview
 
-The Video Transcoding App allows users to upload, manage, and transcode videos from different formats (e.g., AVI, MKV, FLV) into MP4 format. The app provides a user-friendly interface to manage videos and see the progress of transcoding in real time. The application uses Docker for containerization and is hosted on an AWS EC2 instance.
+The Video Transcoding App is a robust platform that enables users to upload, manage, and transcode videos from various formats (such as AVI, MKV, and FLV) into the widely-supported MP4 format. Built with a user-friendly interface, the app provides real-time progress updates during transcoding, ensuring a seamless user experience.
+
+The application is containerized using Docker and is hosted on an AWS EC2 instance. It leverages AWS RDS for managing video metadata and user information, while video files and thumbnails are securely stored in Amazon S3. Access to these files is facilitated through PreSigned URLs, ensuring secure, temporary access.
+
+The app employs AWS Security Groups to control inbound and outbound traffic, maintaining a secure environment. Designed as a stateless application, it efficiently handles user sessions and requests without retaining session state on the server, promoting scalability and reliability.
 
 ## Features
 
@@ -10,11 +14,11 @@ The Video Transcoding App allows users to upload, manage, and transcode videos f
 - **Video Upload and Management**: Users can upload videos in various formats and manage their uploads.
 - **Video Transcoding**: Convert videos from formats like AVI, MKV, FLV, etc., to MP4 format.
 - **REST API**: Comprehensive REST API for managing user sessions, video uploads, transcoding, and downloads & deletions.
-- **STATELESS**
-  - **RDS**: Used to store user information, video metadata, and manage video ownership.
-  - **S3-BUCKET**: Used to store user data/video, thumbnails/.
-- **PreSignedURL**: Used to access files from S3.
-- **SecurityGroup**: Acts as a virtual firewall controlling inbound and outbound traffic.
+- **STATELESS architecture** : The application operates statelessly, allowing for scalability and efficient resource management.
+- **RDS**: Used for storing user information and video metadata.
+- **S3-BUCKET**: Provides reliable storage for user-uploaded videos and generated thumbnails.
+- **PreSignedURL**: Securely access files stored in S3 with temporary links.
+- **SecurityGroup**: Manage and control inbound and outbound traffic for enhanced security.
 
 
 ## Prerequisites
