@@ -1,5 +1,5 @@
 import ffmpeg from 'fluent-ffmpeg';
-import { uploadToS3, getDownloadUrlFromS3, deleteFromS3, uploadToS3Stream } from './s3.js';
+import { uploadToS3, getDownloadUrlFromS3, deleteFromS3, uploadToS3Stream, getVideoStream } from './s3.js';
 import { dbPromise } from './db.js';
 import path from 'path';
 import { S3Client, GetObjectCommand, HeadObjectCommand } from '@aws-sdk/client-s3';
@@ -15,7 +15,6 @@ export const uploadFile = async (req, res) => {
   try {
     const video = req.files.video;
 
-    // Validate file type
     const validExtensions = ['.mp4', '.avi', '.flv', '.mov', '.mkv'];
     const fileExtension = path.extname(video.name).toLowerCase();
 
@@ -26,10 +25,8 @@ export const uploadFile = async (req, res) => {
     const fileName = `${path.parse(video.name).name}${fileExtension}`;
     const s3Key = `uploads/${fileName}`; // Define S3 key
 
-    // Upload the original video to S3
     await uploadToS3(video, s3Key);
 
-    // Generate a thumbnail from the uploaded video
     const thumbnailS3Key = `thumbnails/${fileName.replace(fileExtension, '.jpg')}`;
 
     // Create a function to get the video stream from S3
@@ -44,7 +41,6 @@ export const uploadFile = async (req, res) => {
         const videoStream = await getVideoStream(); // Await to get the readable stream
         await generateAndUploadThumbnail(videoStream, thumbnailS3Key); // Pass the stream to the function
 
-    // Save file info and thumbnail info in the database
     const db = await dbPromise;
     await db.execute(
       'INSERT INTO videos (filename, user, original_s3_key, thumbnail_s3_key) VALUES (?, ?, ?, ?)',
@@ -89,9 +85,6 @@ export const transcodeVideo = async (req, res) => {
     const uploadTranscodedStream = new PassThrough();
     const uploadTranscodedPromise = uploadToS3Stream(uploadTranscodedStream, s3Key, 'video/mp4');
 
-    // Debug: Check WebSocket clients
-    console.log('Connected WebSocket clients:', [...wss.clients].length);
-
     // Find the WebSocket connection associated with the request
     const clientSocket = [...wss.clients].find(
       (client) => client.readyState === client.OPEN && client._socket?.remoteAddress  === req.connection.remoteAddress
@@ -113,7 +106,6 @@ export const transcodeVideo = async (req, res) => {
          console.log(`FFmpeg STDERR: ${stderrLine}`);
       })
       .on('progress', (progress) => {
-        console.log('Full FFmpeg progress object:', progress); // Log the entire progress object
         if (progress.percent) {
           const progressPercentage = Math.round(progress.percent);
           console.log(`Processing: ${progress.percent}% done`);
@@ -127,8 +119,7 @@ export const transcodeVideo = async (req, res) => {
          }
        })
       .on('end', async () => {
-        console.log('Transcoding completed successfully');
-        uploadTranscodedStream.end(); // Close the stream after transcoding is done
+        uploadTranscodedStream.end(); 
 
         // Ensure WebSocket client is open before closing
       if (clientSocket && clientSocket.readyState === clientSocket.OPEN) {
@@ -140,9 +131,7 @@ export const transcodeVideo = async (req, res) => {
        }
 
         try {
-          // Wait for the transcoding upload to finish
           await uploadTranscodedPromise;
-
           // Update the DB with the new transcoded filename
           await db.execute(
             'INSERT INTO videos (filename, user, original_s3_key, thumbnail_s3_key, created_at) VALUES (?, ?, ?, ?, ?)',
@@ -159,9 +148,7 @@ export const transcodeVideo = async (req, res) => {
       })
       .on('error', (err) => {
         console.error('Error during transcoding:', err);
-        uploadTranscodedStream.end(); // Ensure the stream is closed on error
-
-        // Send error response if headers haven't already been sent
+        uploadTranscodedStream.end();
         if (!res.headersSent) {
           return res.status(500).json({ message: 'Error during transcoding', error: err.message });
          }
@@ -226,7 +213,6 @@ export const listFiles = async (req, res) => {
     const filesWithUrls = await Promise.all(
       files.map(async (file) => {
         const thumbnailS3Key = file.thumbnail_s3_key;
-        const originalS3Key = file.original_s3_key;
 
         if (!thumbnailS3Key) {
           console.error('Missing thumbnail key for file:', file.filename);
@@ -253,7 +239,6 @@ export const listFiles = async (req, res) => {
     );
     // Log the response with URLs for debugging
     console.log('Files with URLs:', filesWithUrls);
-
     // Send the response to the client
     res.json(filesWithUrls);
 
@@ -289,7 +274,7 @@ export const deleteFile = async (req, res) => {
       return res.status(404).send('File not found');
     }
 
-    // Ensure that both S3 keys are retrieved correctly
+    //both S3 keys are retrieved correctly
     const s3Key = file.original_s3_key;
     const thumbnailS3Key = file.thumbnail_s3_key;
 
