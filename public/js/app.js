@@ -112,7 +112,7 @@ function renderFileList(files) {
 
         const fileNameWithoutExtension = file.filename.split('.').slice(0, -1).join('.');
         const img = document.createElement('img');
-        img.src = `/thumbnails/${fileNameWithoutExtension}.png`; 
+        img.src = file.thumbnailUrl; 
         img.alt = file.filename;
         img.classList.add('thumbnail');
 
@@ -206,21 +206,14 @@ async function downloadFile(fileId, filename) {
             throw new Error('File download failed');
         }
 
-        // Convert the response to a Blob
-        const blob = await response.blob();
+        // Parse the response as JSON to get the download URL
+        const data = await response.json();
+        if (!data.downloadUrl) {
+            throw new Error('Download URL not found in response');
+        }
 
-        // Create a download link and trigger it
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = filename; // The name of the file to save
-
-        // Append the link to the document and trigger the click event
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-
-        // Clean up the DOM by removing the download link
-        document.body.removeChild(downloadLink);
-        console.log(`File download initiated for: ${filename}`);
+        // Use window.location to download the file
+        window.location.href = data.downloadUrl;
 
     } catch (error) {
         console.error('Download error:', error);
@@ -238,12 +231,12 @@ async function startTranscoding() {
 
     try {
         // Establish WebSocket connection to receive progress updates
-        const ws = new WebSocket('ws://localhost:3000');
+        const ws = new WebSocket('ws://localhost:3000'); //change to REAL DNS
 
         ws.onopen = async () => {
             console.log('WebSocket connection established');
 
-            // Now send the request to initiate transcoding once WebSocket is ready
+            // Request to initiate transcoding once WebSocket is ready
             const response = await fetch(`/videos/transcode/${videoId}`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
@@ -271,6 +264,8 @@ async function startTranscoding() {
                 alert('Transcoding completed successfully!');
                 progressBar.style.display = 'none'; // Hide the progress bar
                 loadFiles();
+                const videoSelect = document.getElementById('videoSelect');
+                videoSelect.value = ""; // Clear the selection
                 ws.close();
             } else if (data.error) {
                 alert(`Error during transcoding: ${data.error}`);
