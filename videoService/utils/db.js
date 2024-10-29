@@ -10,7 +10,7 @@ export const dbPromise = mysql.createPool({
   password: process.env.RDS_PASSWORD,
   database: process.env.RDS_DATABASE,
   waitForConnections: true,
-  connectionLimit: 10,
+  connectionLimit: 50,
   queueLimit: 0
 });
 export const initDb = async () => {
@@ -23,4 +23,3 @@ export const initDb = async () => {
     throw error;
   }
 };
-

@@ -48,6 +48,3 @@ docker-compose.override.yml
 uploads/
 public/thumbnails/
 
-# SQLite database files
-*.sqlite
-*.sqlite3

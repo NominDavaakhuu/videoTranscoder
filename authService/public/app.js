@@ -14,7 +14,7 @@ function showLoginPage() {
     document.getElementById('mainContent').style.display = 'none';
 
     // Update the browser URL to the login page
-    history.pushState(null, "Login", "/login");
+    history.pushState(null, "Login", "/auth/login");
 }
 
 function showMainContent() {
